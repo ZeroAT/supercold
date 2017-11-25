@@ -6,7 +6,35 @@
 ***************************************/
 
 $(document).ready(function(){
+	$(".StartButton").click(function () {
+		$(".MainMenu").hide();
+        $(".DeathScreen").hide();
+		$(".CreditScreen").hide();
+        $("#canvas").show();
+		offsetDY = accel.getAY();
+        offsetDX = accel.getAX();
+        start = setInterval(draw, 33);
+		var clock = setInterval(clock, 100);
+		console.log();
+		console.log();
+        draw();
+    });
 
+	$(".CreditButton").click(function () {
+		$(".MainMenu").hide();
+        $(".DeathScreen").hide();
+        $("#canvas").hide();
+		$(".CreditScreen").show();
+
+	});
+
+	$(".ReturnButton").click(function () {
+		$(".MainMenu").show();
+        $(".DeathScreen").hide();
+        $("#canvas").hide();
+		$(".CreditScreen").hide();
+
+	});
 	//initial conditions
 	playerX = 5;
 	playerY = 5;
@@ -18,6 +46,7 @@ $(document).ready(function(){
 	xVal = 0;
 	yVal = 0;
 	maxAccel = 15;
+
 	var bulletLoc = [];
 	var bulletSlope = [];
 	var Enemy = [];
@@ -34,16 +63,9 @@ $(document).ready(function(){
 	var bulletAngle = [];
 	newCoin();
 
-	var drawing = document.getElementById("background");
+
+	var drawing = document.getElementById("canvas");
 	displayrate = document.getElementById("rate");
-Math.atan
-	//set refresh rate
-	displayrate.onclick = function(){
-		offsetDY = accel.getAY();
-        offsetDX = accel.getAX();
-        start = setInterval(draw, 33);
-		var clock = setInterval(clock, 100);
-      };
 
 
 	//assign keydown & keydown event handlers to page
@@ -101,12 +123,13 @@ Math.atan
 
 	function draw(){
 
-		drawing.width+=0;
+		console.log();
 		var con = drawing.getContext("2d");
-
+		var w = $("#canvas").width();
+		var h = $("#canvas").height();
  		newDX = accel.getAX();
     newDY = accel.getAY();
-
+		console.log();
         //update position change with accelerometer data
 		dY += (newDX-offsetDX);
 		dX += (newDY-offsetDY);
@@ -205,8 +228,11 @@ Math.atan
 			if(score > window.top.name){
 				window.top.name = score;
 			}
-			alert("Game over!");
-			quit();
+			clearInterval(start);
+			//window.location.reload(false);
+			endGame();
+			//alert("Game over!");
+			//quit();
 		}
 
 	} // end draw
@@ -409,6 +435,19 @@ Math.atan
 		  this.getRotZ = function(){return rotZ;}
 
 	} // end class def
+	function endGame() {
+        $("#canvas").hide();
+        $("#score").text(score);
+		var con = drawing.getContext("2d");
+		con.clearRect(0, 0, drawing.width, drawing.height);
+		bulletLoc.length = [];
+		bulletSlope.length = [];
+		Enemy.length = [];
+		bulletAngle = [];
+		score = 0;
+        $(".DeathScreen").show();
+		clearInterval(start);
+    }
 
 	function quit(){
 
