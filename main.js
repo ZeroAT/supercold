@@ -6,17 +6,18 @@
 ***************************************/
 
 $(document).ready(function(){
-	 $(".StartButton").click(function () {
-		 $(".MainMenu").hide();
-		 $(".DeathScreen").hide();
-		 $(".CreditScreen").hide();
-         $("#canvas").show();
-		 offsetDY = accel.getAY();
-         offsetDX = accel.getAX();
-         start = setInterval(draw, 33);
-		 var clock = setInterval(clock, 100);
-		 console.log();
-         draw();
+	$(".StartButton").click(function () {
+		$(".MainMenu").hide();
+        $(".DeathScreen").hide();
+		$(".CreditScreen").hide();
+        $("#canvas").show();
+		offsetDY = accel.getAY();
+        offsetDX = accel.getAX();
+        start = setInterval(draw, 33);
+		var clock = setInterval(clock, 100);
+		console.log();
+		console.log();
+        draw();
     });
 	
 	$(".CreditButton").click(function () {
