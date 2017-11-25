@@ -6,35 +6,36 @@
 ***************************************/
 
 $(document).ready(function(){
+
 	$(".StartButton").click(function () {
 		$(".MainMenu").hide();
-        $(".DeathScreen").hide();
+    $(".DeathScreen").hide();
 		$(".CreditScreen").hide();
-        $("#canvas").show();
+    $("#canvas").show();
 		offsetDY = accel.getAY();
-        offsetDX = accel.getAX();
-        start = setInterval(draw, 33);
+    offsetDX = accel.getAX();
+    start = setInterval(draw, 33);
 		var clock = setInterval(clock, 100);
 		console.log();
 		console.log();
-        draw();
+    draw();
     });
-	
+
 	$(".CreditButton").click(function () {
 		$(".MainMenu").hide();
-        $(".DeathScreen").hide();
-        $("#canvas").hide();
+    $(".DeathScreen").hide();
+    $("#canvas").hide();
 		$(".CreditScreen").show();
 
 	});
-	
+
 	$(".ReturnButton").click(function () {
 		$(".MainMenu").show();
-        $(".DeathScreen").hide();
-        $("#canvas").hide();
+    $(".DeathScreen").hide();
+    $("#canvas").hide();
 		$(".CreditScreen").hide();
 
-	});	
+	});
 	//initial conditions
 	playerX = 5;
 	playerY = 5;
@@ -62,8 +63,8 @@ $(document).ready(function(){
 	var score = 0;
 	var bulletAngle = [];
 	newCoin();
-	
-	
+
+
 	var drawing = document.getElementById("canvas");
 	displayrate = document.getElementById("rate");
 
@@ -436,8 +437,8 @@ $(document).ready(function(){
 
 	} // end class def
 	function endGame() {
-        $("#canvas").hide();
-        $("#score").text(score);
+		$("#canvas").hide();
+    $("#score").text(score);
 		var con = drawing.getContext("2d");
 		con.clearRect(0, 0, drawing.width, drawing.height);
 		bulletLoc.length = [];
@@ -445,7 +446,7 @@ $(document).ready(function(){
 		Enemy.length = [];
 		bulletAngle = [];
 		score = 0;
-        $(".DeathScreen").show();
+    $(".DeathScreen").show();
 		clearInterval(start);
     }
 
