@@ -15,9 +15,8 @@ $(document).ready(function(){
         offsetDX = accel.getAX();
         start = setInterval(draw, 33);
 		var clock = setInterval(clock, 100);
-		console.log();
-		console.log();
-        draw();
+    draw();
+
     });
 
 	$(".CreditButton").click(function () {
@@ -48,7 +47,6 @@ $(document).ready(function(){
 	maxAccel = 15;
 
 	var bulletLoc = [];
-	var bulletSlope = [];
 	var Enemy = [];
 	var coinX, coinY, enemyX, enemyY;
 	var changeDY, changeDX;
@@ -61,6 +59,7 @@ $(document).ready(function(){
 	var start;
 	var score = 0;
 	var bulletAngle = [];
+	var enemyAngle = [];
 	newCoin();
 
 
@@ -123,13 +122,11 @@ $(document).ready(function(){
 
 	function draw(){
 
-		console.log();
 		var con = drawing.getContext("2d");
 		var w = $("#canvas").width();
 		var h = $("#canvas").height();
  		newDX = accel.getAX();
     newDY = accel.getAY();
-		console.log();
         //update position change with accelerometer data
 		dY += (newDX-offsetDX);
 		dX += (newDY-offsetDY);
@@ -176,6 +173,7 @@ $(document).ready(function(){
 		}
 
 		updateBullet();
+		updateEnemy();
 
 		checkBulletWallCollision();
 
@@ -272,8 +270,9 @@ $(document).ready(function(){
 	  	}
 	  	else{
 
+				newBullet(enemyX,enemyY,Enemy.length);
 	  		Enemy.push(enemyX,enemyY);
-	  		newBullet(enemyX,enemyY,Enemy.length);
+
 	  	}
 
 	  }//end newEnemy()
@@ -281,16 +280,13 @@ $(document).ready(function(){
 	  function newBullet(enemyX,enemyY,bulletArrayLoc){
 
 	  	bulletLoc.splice(bulletArrayLoc,2,enemyX,enemyY);
-	  	bulletSlope.splice(bulletArrayLoc,2,(playerX-enemyX),(playerY-enemyY));
+
 			if(playerX<enemyX){
 				bulletAngle.splice(bulletArrayLoc,2,Math.atan((playerY-enemyY)/(playerX-enemyX))+Math.PI,0);
 			}
 			else{
 				bulletAngle.splice(bulletArrayLoc,2,Math.atan((playerY-enemyY)/(playerX-enemyX)),0);
 			}
-
-			console.log("bulletAngle[bulletArrayLoc]: " + bulletAngle[bulletArrayLoc]);
-			console.log("bulletAngle[bulletArrayLoc+1]: " + bulletAngle[bulletArrayLoc+1]);
 
 	  }//end newBullet()
 
@@ -376,6 +372,27 @@ $(document).ready(function(){
 	  	}
 	  } //end updateBullet
 
+		function updateEnemy(){
+			//use timescale to determine next location of bullets on slope of bullet trace rays
+			for(i = 0; i <= Enemy.length-1; i+=2){
+
+				if(playerX<Enemy[i]){
+					enemyAngle.splice(i,2,Math.atan((playerY-Enemy[i+1])/(playerX-Enemy[i]))+Math.PI,0);
+				}
+				else{
+					enemyAngle.splice(i,2,Math.atan((playerY-Enemy[i+1])/(playerX-Enemy[i])),0);
+				}
+
+				//console.log(enemyAngle[0]*(180/Math.PI));
+				//console.log("Calculation: " + Math.atan((playerY-Enemy[i+1])/(playerX-Enemy[i]))*(180/Math.PI));
+				//console.log("Enemy X: " + Enemy[i] +" Enemy Y: " + Enemy[i+1]);
+
+
+				Enemy[i] += (Math.cos(enemyAngle[i]))*timescaleRate/4;
+				Enemy[i+1] += (Math.sin(enemyAngle[i]))*timescaleRate/4;
+			}
+		} //end updateBullet
+
 	  //aharris simplegame.js library accelerometer snippet
 
 	  function Accel(){
@@ -441,9 +458,9 @@ $(document).ready(function(){
 		var con = drawing.getContext("2d");
 		con.clearRect(0, 0, drawing.width, drawing.height);
 		bulletLoc.length = [];
-		bulletSlope.length = [];
 		Enemy.length = [];
 		bulletAngle = [];
+		enemyAngle = [];
 		score = 0;
         $(".DeathScreen").show();
 		clearInterval(start);
