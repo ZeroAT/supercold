@@ -7,14 +7,10 @@
 
 $(document).ready(function(){
 	 $(".StartButton").click(function () {
-		 		console.log();
         $(".MainMenu").hide();
-				console.log();
         $(".DeathScreen").hide();
 		$(".CreditScreen").hide();
-				console.log();
         $("#canvas").show();
-		console.log();
 		offsetDY = accel.getAY();
         offsetDX = accel.getAX();
         start = setInterval(draw, 33);
@@ -65,11 +61,12 @@ $(document).ready(function(){
 	var score = 0;
 	var bulletAngle = [];
 	newCoin();
-			console.log();
+	
+	
 	var drawing = document.getElementById("canvas");
 	displayrate = document.getElementById("rate");
 
-		console.log();
+
 	//assign keydown & keydown event handlers to page
 	document.onkeydown = checkKeyDown;
 	document.onkeyup = checkKeyUp;
@@ -129,7 +126,6 @@ $(document).ready(function(){
 		var con = drawing.getContext("2d");
 		var w = $("#canvas").width();
 		var h = $("#canvas").height();
-				console.log();
  		newDX = accel.getAX();
     newDY = accel.getAY();
 		console.log();
