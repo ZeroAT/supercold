@@ -65,7 +65,9 @@ $(document).ready(function(){
 
 	var drawing = document.getElementById("canvas");
 	displayrate = document.getElementById("rate");
+	document.body.appendChild(drawing);
 
+	con = drawing.getContext('2d');
 
 	//assign keydown & keydown event handlers to page
 	document.onkeydown = checkKeyDown;
@@ -122,7 +124,6 @@ $(document).ready(function(){
 
 	function draw(){
 
-		var con = drawing.getContext("2d");
 		var w = $("#canvas").width();
 		var h = $("#canvas").height();
  		newDX = accel.getAX();
@@ -193,6 +194,7 @@ $(document).ready(function(){
 			timescaleRate -= timescaleRate/15;
 		}
 
+
 		//Begin drawing all elements
 		// Fill with gradient
 		con.fillStyle = "#f0f0f0";
@@ -211,6 +213,11 @@ $(document).ready(function(){
 		con.fillStyle = "yellow";
 		con.fillRect(coinX+2,coinY+2,6,6);
 
+		con.fillStyle = "rgba(0, 0, 0, 0.5)";
+		con.font = "24px Helvetica";
+		con.textAlign = "left";
+		con.textBaseline = "top";
+		con.fillText("Score: " + score, 486, 10);
 
 		for(i = 0; i <= Enemy.length-1; i+=2){
 
@@ -226,6 +233,7 @@ $(document).ready(function(){
 			if(score > window.top.name){
 				window.top.name = score;
 			}
+
 			clearInterval(start);
 			//window.location.reload(false);
 			endGame();
@@ -266,6 +274,7 @@ $(document).ready(function(){
 
 	  	//check for collisions
 	  	if(checkCoinCollision(enemyX, enemyY) || checkEnemyCollision(enemyX,enemyY)){
+
 	  		newEnemy();
 	  	}
 	  	else{
@@ -294,6 +303,7 @@ $(document).ready(function(){
 
 	  	if((coinX >= X && coinX <= X + 18) || (coinX +10 >= X && coinX + 10 <= X + 18)){
 	  		if((coinY >= Y && coinY <= Y + 18) || (coinY +10 >= Y && coinY + 10 <= Y + 18)){
+					fadeOut('sfddsfs');
 		  		return true;
 		  	}
 	  	}
@@ -452,6 +462,14 @@ $(document).ready(function(){
 		  this.getRotZ = function(){return rotZ;}
 
 	} // end class def
+
+
+	function fadeOut(text) {
+con.fillText("Score: " + score, 100, 100);
+}
+
+
+
 	function endGame() {
         $("#canvas").hide();
         $("#score").text(score);
