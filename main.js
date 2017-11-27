@@ -64,7 +64,6 @@ $(document).ready(function(){
 
 
 	var drawing = document.getElementById("canvas");
-	displayrate = document.getElementById("rate");
 	document.body.appendChild(drawing);
 
 	con = drawing.getContext('2d');
@@ -146,10 +145,6 @@ $(document).ready(function(){
     oldDX = newDX;
  		oldDY = newDY;
 
-    output = "Score: " + score + "   //   Highscore: " + window.top.name;
-
-		//output html text at the top of page
-		displayrate.innerHTML = output;
 
 		//check for max velocity
 		if(dX > maxAccel){
