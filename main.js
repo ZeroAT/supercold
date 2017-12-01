@@ -71,19 +71,16 @@ $(document).ready(function(){
 
 	var drawing = document.getElementById("canvas");
 	document.body.appendChild(drawing);
-
 	con = drawing.getContext('2d');
 
 	//assign keydown & keydown event handlers to page
 	document.onkeydown = checkKeyDown;
 	document.onkeyup = checkKeyUp;
-
 	drawing.addEventListener('mousedown', onDown, true);
 
 	function onDown(e){
 		mouseX = event.offsetX;
  		mouseY = event.offsetY;
-
 		playerBulletFire();
 
 	}
@@ -245,9 +242,8 @@ $(document).ready(function(){
 		for (i = 0; i < playerBulletLoc.length; i+=2){
 
 			con.fillStyle = "black";
-			console.log()
+
 			con.fillRect(playerBulletLoc[i],playerBulletLoc[i+1],5,5);
-			console.log();
 
 		}
 
@@ -275,22 +271,14 @@ $(document).ready(function(){
 			//playerBulletLoc.push(playerX, playerY);
 			//console.log(Enemy.length);
 
-			if (Enemy.length > -1){
+			if (Enemy.length > 0 && playerBulletLoc.length < 2 ){
 				playerBulletLoc.splice(2,0,playerX,playerY);
-				//playerBulletLoc.push(playerX,playerY);
-				console.log("PlayerX: " + playerX + "mouseX: " + mouseX);
-				console.log("PlayerY: " + playerY + "mouseY: " + mouseY);
+
 				if(playerX<mouseX ){
-					console.log("PlayerX<mouseX");
-					//console.log(Math.atan((playerY-mouseY)/(playerX-mouseX)));
-					console.log(Math.atan((playerY-mouseY)/(playerX-mouseX)));
-					playerBulletAngle.splice(2,2,Math.atan((playerY-mouseY)/(playerX-mouseX)),0);
+					playerBulletAngle.splice(0,2,Math.atan((playerY-mouseY)/(playerX-mouseX)),0);
 				}
 				else{
-					playerBulletAngle.splice(2,2,Math.atan((playerY-mouseY)/(playerX-mouseX))+Math.PI,0);
-					console.log("PlayerX>mouseX");
-					console.log(Math.atan((playerY-mouseY)/(playerX-mouseX)));
-					//console.log(Math.atan((playerY-mouseY)/(playerX-mouseX)));
+					playerBulletAngle.splice(0,2,Math.atan((playerY-mouseY)/(playerX-mouseX))+Math.PI,0);
 				}
 			}
 		}
@@ -320,8 +308,8 @@ $(document).ready(function(){
 			 for (j = 0; j < playerBulletLoc.length; j+=2){
 				 if((Enemy[i] >= playerBulletLoc[j] && Enemy[i] <= playerBulletLoc[j] + 18) || (Enemy[i] + 18 >= playerBulletLoc[j] && Enemy[i] + 18 <= playerBulletLoc[j] + 18)){
 					if((Enemy[i+1] >= playerBulletLoc[j+1] && Enemy[i+1] <= playerBulletLoc[j+1] + 18) || (Enemy[i+1] + 18 >= playerBulletLoc[j+1] && Enemy[i+1] + 18 <= playerBulletLoc[j+1] + 18)){
-					 	Enemy.splice(i,2);
-						playerBulletLoc.splice(i,2);
+						playerBulletLoc.splice(j,2);
+						Enemy.splice(i,2);
 
 				 }
 			 }
@@ -349,6 +337,16 @@ $(document).ready(function(){
 	  	coinX = Math.random() * (580);
 	  	coinY = Math.random() * (380);
 
+
+		 for (i = 0; i < Enemy.length; i+=2){
+			 if((Enemy[i] >= coinX && Enemy[i] <= coinX + 18) || (Enemy[i] +18 >= coinX && Enemy[i] + 18 <= coinX + 18)){
+				 if((Enemy[i+1] >= coinY && Enemy[i+1] <= coinY + 18) || (Enemy[i+1] + 18 >= coinY && Enemy[i+1] + 18 <= coinY + 18)){
+					 coinX = Math.random() * (580);
+					 coinY = Math.random() * (380);
+				 }
+			 }
+		 }
+
 	  	//check for collisions
 	  	if(checkCoinCollision(playerX,playerY)){
 	  		newCoin()
@@ -361,9 +359,9 @@ $(document).ready(function(){
 	  	enemyY = Math.random() * (375);
 
 	  	//check for collisions
-	  	if(checkCoinCollision(enemyX, enemyY) || checkEnemyCollision(enemyX,enemyY)){
+	  	if(checkCoinCollision(enemyX, enemyY) || checkEnemyCollision(enemyX,enemyY) ){
+				newEnemy();
 
-	  		newEnemy();
 	  	}
 	  	else{
 
@@ -399,6 +397,10 @@ $(document).ready(function(){
 	  	}
 
 	  }//end checkCoinCollision()
+
+
+
+
 
 	  function checkEnemyCollision(X,Y){
 
