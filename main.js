@@ -47,6 +47,8 @@ $(document).ready(function(){
 	maxAccel = 15;
 
 	var bulletLoc = [];
+	var playerBullet = [];
+	var playerBulletLoc = [];
 	var Enemy = [];
 	var coinX, coinY, enemyX, enemyY;
 	var changeDY, changeDX;
@@ -58,20 +60,30 @@ $(document).ready(function(){
 	var oldDX = 0;
 	var start;
 	var score = 0;
+	var mouseX, mouseY;
 	var bulletAngle = [];
 	var enemyAngle = [];
+	var playerBulletAngle = [];
+	var playerAngle= [];
 	newCoin();
+
 
 
 	var drawing = document.getElementById("canvas");
 	document.body.appendChild(drawing);
-
 	con = drawing.getContext('2d');
 
 	//assign keydown & keydown event handlers to page
 	document.onkeydown = checkKeyDown;
 	document.onkeyup = checkKeyUp;
+	drawing.addEventListener('mousedown', onDown, true);
 
+	function onDown(e){
+		mouseX = event.offsetX;
+ 		mouseY = event.offsetY;
+		playerBulletFire();
+
+	}
 	function checkKeyDown(e) {
 
 		//pre IE9 window condition check
@@ -168,10 +180,14 @@ $(document).ready(function(){
 			newEnemy();
 		}
 
+		updatePlayerBullet();
 		updateBullet();
+		checkPlayerBulletHit();
 		updateEnemy();
 
 		checkBulletWallCollision();
+		playerBulletWallCollision();
+
 
 
 		//introduce drag in dX and dY
@@ -223,6 +239,13 @@ $(document).ready(function(){
 			con.fillRect(Enemy[i],Enemy[i+1],18,18);
 
 		}
+		for (i = 0; i < playerBulletLoc.length; i+=2){
+
+			con.fillStyle = "black";
+
+			con.fillRect(playerBulletLoc[i],playerBulletLoc[i+1],5,5);
+
+		}
 
 		if(checkEnemyCollision(playerX,playerY) || checkBulletHit(playerX,playerY)){
 			if(score > window.top.name){
@@ -237,6 +260,64 @@ $(document).ready(function(){
 		}
 
 	} // end draw
+		function playerBulletFire(){
+			//alert("test");
+			//console.log(playerX + "::::" + playerY );
+			newPlayerBullet(playerX, playerY);
+
+		}
+		function newPlayerBullet(playerX, playerY){
+
+			//playerBulletLoc.push(playerX, playerY);
+			//console.log(Enemy.length);
+
+			if (Enemy.length > 0 && playerBulletLoc.length < 2 ){
+				playerBulletLoc.splice(2,0,playerX,playerY);
+
+				if(playerX<mouseX ){
+					playerBulletAngle.splice(0,2,Math.atan((playerY-mouseY)/(playerX-mouseX)),0);
+				}
+				else{
+					playerBulletAngle.splice(0,2,Math.atan((playerY-mouseY)/(playerX-mouseX))+Math.PI,0);
+				}
+			}
+		}
+
+		function updatePlayerBullet(){
+	  	//use timescale to determine next location of bullets on slope of bullet trace rays
+	  	for(i = 0; i <= playerBulletLoc.length - 1; i+=2){
+				playerBulletLoc[i] += (Math.cos(playerBulletAngle[i]))  * timescaleRate/2;
+	  		playerBulletLoc[i+1] += (Math.sin(playerBulletAngle[i])) * timescaleRate/2;
+	  	}
+	  } //end updateBullet
+
+		function playerBulletWallCollision(){
+			//if bullet hits wall, delete bullet and make new console.log(playerBulletLoc[i]);
+	  	for(i = 0; i <= playerBulletLoc.length - 1; i+=2){
+		  	if(playerBulletLoc[i] >= 597 || playerBulletLoc[i] <= 0 || playerBulletLoc[i+1] >= 397 || playerBulletLoc[i+1] <= 0){
+		  		playerBulletLoc.splice(i,2);
+		  	}//end if
+
+		 }//end for
+
+	 }//end playerBulletWallCollision()
+
+
+	 function checkPlayerBulletHit(){
+		 for (i = 0; i < Enemy.length; i+=2){
+			 for (j = 0; j < playerBulletLoc.length; j+=2){
+				 if((Enemy[i] >= playerBulletLoc[j] && Enemy[i] <= playerBulletLoc[j] + 18) || (Enemy[i] + 18 >= playerBulletLoc[j] && Enemy[i] + 18 <= playerBulletLoc[j] + 18)){
+					if((Enemy[i+1] >= playerBulletLoc[j+1] && Enemy[i+1] <= playerBulletLoc[j+1] + 18) || (Enemy[i+1] + 18 >= playerBulletLoc[j+1] && Enemy[i+1] + 18 <= playerBulletLoc[j+1] + 18)){
+						playerBulletLoc.splice(j,2);
+						Enemy.splice(i,2);
+
+				 }
+			 }
+		 }
+	 	}
+	 }//end checkEnemyCollision
+
+
 
 	  function setYRate(val) {
 	  	dY += val;
@@ -256,6 +337,16 @@ $(document).ready(function(){
 	  	coinX = Math.random() * (580);
 	  	coinY = Math.random() * (380);
 
+
+		 for (i = 0; i < Enemy.length; i+=2){
+			 if((Enemy[i] >= coinX && Enemy[i] <= coinX + 18) || (Enemy[i] +18 >= coinX && Enemy[i] + 18 <= coinX + 18)){
+				 if((Enemy[i+1] >= coinY && Enemy[i+1] <= coinY + 18) || (Enemy[i+1] + 18 >= coinY && Enemy[i+1] + 18 <= coinY + 18)){
+					 coinX = Math.random() * (580);
+					 coinY = Math.random() * (380);
+				 }
+			 }
+		 }
+
 	  	//check for collisions
 	  	if(checkCoinCollision(playerX,playerY)){
 	  		newCoin()
@@ -268,9 +359,9 @@ $(document).ready(function(){
 	  	enemyY = Math.random() * (375);
 
 	  	//check for collisions
-	  	if(checkCoinCollision(enemyX, enemyY) || checkEnemyCollision(enemyX,enemyY)){
+	  	if(checkCoinCollision(enemyX, enemyY) || checkEnemyCollision(enemyX,enemyY) ){
+				newEnemy();
 
-	  		newEnemy();
 	  	}
 	  	else{
 
@@ -298,7 +389,6 @@ $(document).ready(function(){
 
 	  	if((coinX >= X && coinX <= X + 18) || (coinX +10 >= X && coinX + 10 <= X + 18)){
 	  		if((coinY >= Y && coinY <= Y + 18) || (coinY +10 >= Y && coinY + 10 <= Y + 18)){
-					fadeOut('sfddsfs');
 		  		return true;
 		  	}
 	  	}
@@ -307,6 +397,10 @@ $(document).ready(function(){
 	  	}
 
 	  }//end checkCoinCollision()
+
+
+
+
 
 	  function checkEnemyCollision(X,Y){
 
@@ -475,6 +569,8 @@ con.fillText("Score: " + score, 100, 100);
 		bulletAngle = [];
 		enemyAngle = [];
 		score = 0;
+
+
         $(".DeathScreen").show();
 		clearInterval(start);
     }
