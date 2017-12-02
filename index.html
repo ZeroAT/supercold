@@ -15,20 +15,31 @@
 				<input type="button" class="StartButton" value="Start">
 				<p>
 				<input type="button" class="CreditButton" value="Credits">
-		
+
             </div>
             <div class="DeathScreen" style="display:none">
                 <h1>Game Over</h1>
+
                 <p>Your score was: <span id="score"></span></p>
+
+                <p>Highscores:</p>
+                <p><b>1) <span id="score1"></span></p>
+                <p>2) <b><span id="score2"></span></p>
+                <p>3)<b> <span id="score3"></span></p>
+                <p>4) <b><span id="score4"></span></p>
+                <p>5) <b> <span id="score5"></span></p>
+
+
+
                 <input class="StartButton" type="button" value="Restart" />
             </div>
-			
+
 			<div class="CreditScreen" style="display:none">
                 <h1>Credits</h1>
                 <p>.....................</p>
                 <input class="ReturnButton" type="button" value="Return" />
             </div>
-			
+
             <canvas id="canvas" width="600" height="400" style="display:none;"></canvas>
         </div>
 
