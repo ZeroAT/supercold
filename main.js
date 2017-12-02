@@ -5,7 +5,12 @@
  PURPOSE: Provide jquery and javascript functionality to HTML5 SUPERCOLD Mobile Game
 ***************************************/
 
+var highscores = [];
 $(document).ready(function(){
+	var bulletLoc = [];
+	var playerBullet = [];
+	var playerBulletLoc = [];
+	var Enemy = [];
 	$(".StartButton").click(function () {
 		$(".MainMenu").hide();
         $(".DeathScreen").hide();
@@ -35,6 +40,7 @@ $(document).ready(function(){
 
 	});
 	//initial conditions
+
 	playerX = 5;
 	playerY = 5;
 	timescale = 1;
@@ -46,10 +52,8 @@ $(document).ready(function(){
 	yVal = 0;
 	maxAccel = 15;
 
-	var bulletLoc = [];
-	var playerBullet = [];
-	var playerBulletLoc = [];
-	var Enemy = [];
+
+
 	var coinX, coinY, enemyX, enemyY;
 	var changeDY, changeDX;
 	var offsetDX, offsetDY;
@@ -65,9 +69,8 @@ $(document).ready(function(){
 	var enemyAngle = [];
 	var playerBulletAngle = [];
 	var playerAngle= [];
+	var highscores = [];
 	newCoin();
-
-
 
 	var drawing = document.getElementById("canvas");
 	document.body.appendChild(drawing);
@@ -79,8 +82,8 @@ $(document).ready(function(){
 	drawing.addEventListener('mousedown', onDown, true);
 
 	function onDown(e){
-		mouseX = e.offsetX;
- 		mouseY = e.offsetY;
+		mouseX = event.offsetX;
+ 		mouseY = event.offsetY;
 		playerBulletFire();
 
 	}
@@ -494,6 +497,7 @@ $(document).ready(function(){
 
 	  //aharris simplegame.js library accelerometer snippet
 
+
 	  function Accel(){
 		  //virtual accelerometer
 
@@ -552,16 +556,34 @@ $(document).ready(function(){
 
 	} // end class def
 
-
-	function fadeOut(text) {
-con.fillText("Score: " + score, 100, 100);
-}
-
-
-
 	function endGame() {
-        $("#canvas").hide();
-        $("#score").text(score);
+		var scores = JSON.parse(localStorage.getItem('score')) || [];
+		scores.push(score);
+		scores.sort(function(a, b){return b-a});
+		console.log(scores);
+		//highscores.push(score);
+		//highscores.sort();
+		localStorage.setItem("score", JSON.stringify(scores));
+		var highscores = localStorage.getItem("score");
+		highscores.replace(/[,;]$/,'')
+
+		console.log(highscores);
+		console.log(highscores.length);
+			$("#score1").text(highscores[1]);
+			$("#score2").text(highscores[3]);
+			$("#score3").text(highscores[5]);
+			$("#score4").text(highscores[7]);
+			$("#score5").text(highscores[9]);
+
+
+
+    $("#canvas").hide();
+    $("#score").text(score);
+
+
+
+		//$("#score1").text(test[0]);
+
 		var con = drawing.getContext("2d");
 		con.clearRect(0, 0, drawing.width, drawing.height);
 		bulletLoc.length = [];
@@ -572,6 +594,7 @@ con.fillText("Score: " + score, 100, 100);
 
 
         $(".DeathScreen").show();
+
 		clearInterval(start);
     }
 
