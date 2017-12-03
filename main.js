@@ -82,8 +82,8 @@ $(document).ready(function(){
 	drawing.addEventListener('mousedown', onDown, true);
 
 	function onDown(e){
-		mouseX = event.offsetX;
- 		mouseY = event.offsetY;
+		mouseX = e.offsetX;
+ 		mouseY = e.offsetY;
 		playerBulletFire();
 
 	}
