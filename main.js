@@ -7,10 +7,7 @@
 
 var highscores = [];
 $(document).ready(function(){
-	var bulletLoc = [];
-	var playerBullet = [];
-	var playerBulletLoc = [];
-	var Enemy = [];
+
 	$(".StartButton").click(function () {
 		$(".MainMenu").hide();
         $(".DeathScreen").hide();
@@ -53,7 +50,10 @@ $(document).ready(function(){
 	maxAccel = 15;
 
 
-
+	var bulletLoc = [];
+	var playerBullet = [];
+	var playerBulletLoc = [];
+	var Enemy = [];
 	var coinX, coinY, enemyX, enemyY;
 	var changeDY, changeDX;
 	var offsetDX, offsetDY;
@@ -313,6 +313,7 @@ $(document).ready(function(){
 					if((Enemy[i+1] >= playerBulletLoc[j+1] && Enemy[i+1] <= playerBulletLoc[j+1] + 18) || (Enemy[i+1] + 18 >= playerBulletLoc[j+1] && Enemy[i+1] + 18 <= playerBulletLoc[j+1] + 18)){
 						playerBulletLoc.splice(j,2);
 						Enemy.splice(i,2);
+						bulletLoc.splice(i,2)
 
 				 }
 			 }
@@ -362,12 +363,17 @@ $(document).ready(function(){
 	  	enemyY = Math.random() * (375);
 
 	  	//check for collisions
-	  	if(checkCoinCollision(enemyX, enemyY) || checkEnemyCollision(enemyX,enemyY) ){
+	  	if(checkCoinCollision(enemyX, enemyY) || checkEnemyCollision(enemyX,enemyY)  ){
 				newEnemy();
 
 	  	}
 	  	else{
 
+				if (checkEnemyCollision(enemyX,enemyY)){
+					console.log("Enemy Collision Detected. New coordss!")
+					enemyX = Math.random() * (575);
+					enemyY = Math.random() * (375);
+				}
 				newBullet(enemyX,enemyY,Enemy.length);
 	  		Enemy.push(enemyX,enemyY);
 
@@ -400,8 +406,6 @@ $(document).ready(function(){
 	  	}
 
 	  }//end checkCoinCollision()
-
-
 
 
 
@@ -557,32 +561,23 @@ $(document).ready(function(){
 	} // end class def
 
 	function endGame() {
+
 		var scores = JSON.parse(localStorage.getItem('score')) || [];
 		scores.push(score);
 		scores.sort(function(a, b){return b-a});
-		console.log(scores);
-		//highscores.push(score);
-		//highscores.sort();
+
 		localStorage.setItem("score", JSON.stringify(scores));
 		var highscores = localStorage.getItem("score");
-		highscores.replace(/[,;]$/,'')
+		highscores = highscores.replace(/[[\]]/g,'')
 
-		console.log(highscores);
-		console.log(highscores.length);
-			$("#score1").text(highscores[1]);
-			$("#score2").text(highscores[3]);
-			$("#score3").text(highscores[5]);
-			$("#score4").text(highscores[7]);
-			$("#score5").text(highscores[9]);
-
-
+		$("#score1").text(highscores.split(/,/)[0]);
+		$("#score2").text(highscores.split(/,/)[1]);
+		$("#score3").text(highscores.split(/,/)[2]);
+		$("#score4").text(highscores.split(/,/)[3]);
+		$("#score5").text(highscores.split(/,/)[4]);
 
     $("#canvas").hide();
     $("#score").text(score);
-
-
-
-		//$("#score1").text(test[0]);
 
 		var con = drawing.getContext("2d");
 		con.clearRect(0, 0, drawing.width, drawing.height);
@@ -593,7 +588,7 @@ $(document).ready(function(){
 		score = 0;
 
 
-        $(".DeathScreen").show();
+    $(".DeathScreen").show();
 
 		clearInterval(start);
     }
