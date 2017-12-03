@@ -70,6 +70,9 @@ $(document).ready(function(){
 	var playerBulletAngle = [];
 	var playerAngle= [];
 	var highscores = [];
+	var coinAudio = new Audio('audio/coin.mp3');
+	var bulletAudio = new Audio('audio/bullet.mp3');
+
 	newCoin();
 
 	var drawing = document.getElementById("canvas");
@@ -85,6 +88,7 @@ $(document).ready(function(){
 		mouseX = e.offsetX;
  		mouseY = e.offsetY;
 		playerBulletFire();
+
 
 	}
 	function checkKeyDown(e) {
@@ -276,6 +280,7 @@ $(document).ready(function(){
 
 			if (Enemy.length > 0 && playerBulletLoc.length < 2 ){
 				playerBulletLoc.splice(2,0,playerX,playerY);
+				bulletAudio.play();
 
 				if(playerX<mouseX ){
 					playerBulletAngle.splice(0,2,Math.atan((playerY-mouseY)/(playerX-mouseX)),0);
@@ -353,6 +358,7 @@ $(document).ready(function(){
 
 	  	//check for collisions
 	  	if(checkCoinCollision(playerX,playerY)){
+				coinAudio.play();
 	  		newCoin()
 	  	}
 
@@ -398,6 +404,7 @@ $(document).ready(function(){
 
 	  	if((coinX >= X && coinX <= X + 18) || (coinX +10 >= X && coinX + 10 <= X + 18)){
 	  		if((coinY >= Y && coinY <= Y + 18) || (coinY +10 >= Y && coinY + 10 <= Y + 18)){
+					coinAudio.play();
 		  		return true;
 		  	}
 	  	}
@@ -585,6 +592,7 @@ $(document).ready(function(){
 		Enemy.length = [];
 		bulletAngle = [];
 		enemyAngle = [];
+		playerBulletLoc = [];
 		score = 0;
 
 
