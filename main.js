@@ -6,12 +6,15 @@
 ***************************************/
 
 var highscores = [];
+
+
 $(document).ready(function(){
 
-	$(".StartButton").click(function () {
+	$(".SurvivalButton").click(function () {
 		$(".MainMenu").hide();
         $(".DeathScreen").hide();
 		$(".CreditScreen").hide();
+		$(".HighScoresScreen").hide();
         $("#canvas").show();
 		offsetDY = accel.getAY();
         offsetDX = accel.getAX();
@@ -21,10 +24,42 @@ $(document).ready(function(){
 
     });
 
+		$(".CampaignButton").click(function () {
+			$(".MainMenu").hide();
+					$(".DeathScreen").hide();
+			$(".CreditScreen").hide();
+			$(".HighScoresScreen").hide();
+					$("#canvas").show();
+			offsetDY = accel.getAY();
+					offsetDX = accel.getAX();
+					start = setInterval(draw, 33);
+			var clock = setInterval(clock, 100);
+			draw();
+
+			});
+	$(".HighScoresButton").click(function () {
+				$(".MainMenu").hide();
+		        $(".DeathScreen").hide();
+		        $("#canvas").hide();
+				$(".CreditScreen").hide();
+				var highscores = localStorage.getItem("score");
+				highscores = highscores.replace(/[[\]]/g,'')
+				console.log(highscores);
+				$("#score6").text(highscores.split(/,/)[0]);
+				$("#score7").text(highscores.split(/,/)[1]);
+				$("#score8").text(highscores.split(/,/)[2]);
+				$("#score9").text(highscores.split(/,/)[3]);
+				$("#score10").text(highscores.split(/,/)[4]);
+				$(".HighScoresScreen").show();
+
+
+
+	});
 	$(".CreditButton").click(function () {
 		$(".MainMenu").hide();
         $(".DeathScreen").hide();
         $("#canvas").hide();
+				$(".HighScoresScreen").hide();
 		$(".CreditScreen").show();
 
 	});
@@ -32,6 +67,7 @@ $(document).ready(function(){
 	$(".ReturnButton").click(function () {
 		$(".MainMenu").show();
         $(".DeathScreen").hide();
+				$(".HighScoresScreen").hide();
         $("#canvas").hide();
 		$(".CreditScreen").hide();
 
@@ -70,8 +106,8 @@ $(document).ready(function(){
 	var playerBulletAngle = [];
 	var playerAngle= [];
 	var highscores = [];
-	var coinAudio = new Audio('audio/coin.mp3');
-	var bulletAudio = new Audio('audio/bullet.mp3');
+	var coinAudio = document.getElementById("coin");
+	var bulletAudio = document.getElementById("bullet");
 
 	newCoin();
 
@@ -568,6 +604,9 @@ $(document).ready(function(){
 	} // end class def
 
 	function endGame() {
+
+
+
 
 		var scores = JSON.parse(localStorage.getItem('score')) || [];
 		scores.push(score);

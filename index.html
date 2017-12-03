@@ -8,46 +8,56 @@
   </style>
 
 </head>
+<body>
+  <div class="container">
+    <div class="MainMenu">
 
-        <div class="container">
-            <div class="MainMenu">
-                 <h1>Game</h1>
-				<input type="button" class="StartButton" value="Start">
-				<p>
-				<input type="button" class="CreditButton" value="Credits">
-
-            </div>
-            <div class="DeathScreen" style="display:none">
-                <h1>Game Over</h1>
-
-                <p>Your score was: <span id="score"></span></p>
-
-                <p>Highscores:</p>
-                <p><b>1) <span id="score1"></span></p>
-                <p>2) <b><span id="score2"></span></p>
-                <p>3)<b> <span id="score3"></span></p>
-                <p>4) <b><span id="score4"></span></p>
-                <p>5) <b> <span id="score5"></span></p>
-
-
-
-                <input class="StartButton" type="button" value="Restart" />
-            </div>
-
-			<div class="CreditScreen" style="display:none">
-                <h1>Credits</h1>
-                <p>.....................</p>
-                <input class="ReturnButton" type="button" value="Return" />
-            </div>
-
-            <canvas id="canvas" width="600" height="400" style="display:none;"></canvas>
-        </div>
+      <h1>Game</h1>
+      <input type="button" class="CampaignButton" value="Campaign">
+      <p>
+			<input type="button" class="SurvivalButton" value="Survival">
+			<p>
+      <input type="button" class="HighScoresButton" value="HighScores">
+      <p>
+			<input type="button" class="CreditButton" value="Credits">
+    </div>
+    <div class="DeathScreen" style="display:none">
+      <h1>Game Over</h1>
+      <p>Your score was: <span id="score"></span></p>
+      <p>Highscores:</p>
+      <p><b>1) <span id="score1"></span></p>
+      <p>2) <b><span id="score2"></span></p>
+      <p>3)<b> <span id="score3"></span></p>
+      <p>4) <b><span id="score4"></span></p>
+      <p>5) <b> <span id="score5"></span></p>
+      <input class="CampaignButton" type="button" value="Restart" />
+    </div>
+    <div class="HighScoresScreen" style="display:none">
+    <p>Highscores:</p>
+    <p><b>1) <span id="score6"></span></p>
+    <p>2) <b><span id="score7"></span></p>
+    <p>3)<b> <span id="score8"></span></p>
+    <p>4) <b><span id="score9"></span></p>
+    <p>5) <b> <span id="score10"></span></p>
+    <input class="ReturnButton" type="button" value="Return" />}
+    </div>
+		<div class="CreditScreen" style="display:none">
+      <h1>Credits</h1>
+      <p>.....................</p>
+      <input class="ReturnButton" type="button" value="Return" />
+    </div>
+      <canvas id="canvas" width="600" height="400" style="display:none;"></canvas>
+      <audio id="bullet">
+        <source src="audio/bullet.mp3" type="audio/mpeg" />
+      </audio>
+    <audio id="coin">
+      <source src="audio/coin.mp3" type="audio/mpeg" />
+    </audio>
+    </div>
 
 	<script type="text/javascript" src="jquery.min.js"></script>
 	<script src="main.js"></script>
 
 
 </body>
-
-
 </html>
