@@ -25,7 +25,7 @@ var currentLevel = [[],[],[],[]];
 var campaignMode = false;
 var survivalMode = [[225,200],[],[],[20,20]];
 var level1 = [[5,5],[550,20,100,375],[50,50,100,100,200,50,100,100,350,50,100,100,50,200,100,100,200,200,100,100,350,200,100,100],[550,370]];
-
+var level2 = [[5,5],[300,300,50,250],[420,200,100,100,100,100,25,25,400,350,25,25,400,60,50,50,125,175,25,25,150,225,25,25],[550,350]];
 $(document).ready(function(){
 
 	$(".SurvivalButton").click(function () {
@@ -50,7 +50,18 @@ $(document).ready(function(){
 			$(".CreditScreen").hide();
 			$(".HighScoresScreen").hide();
 			$("#canvas").show();
-			currentLevel = level1;
+
+			if (winCount == 1){
+				currentLevel = level1;
+				currentLevelCheck = 1;
+			}else if(winCount == 2){
+				currentLevel = level2;
+				currentLevelCheck = 2;
+			}else{
+				currentLevel = level1
+				winCount = 1;
+				currentLevelCheck = 1;
+			}
 			campaignMode = true;
 			createLevel();
 			offsetDY = accel.getAY();
@@ -95,6 +106,7 @@ $(document).ready(function(){
 		$(".CreditScreen").hide();
 
 	});
+
 	//initial conditions
 
 	playerX = 5;
@@ -109,6 +121,7 @@ $(document).ready(function(){
 	maxAccel = 5;
 	firstPathCheck = true;
 	updateCounter = 1;
+
 
 
 	//currentLevel uses the following variables
@@ -133,7 +146,8 @@ $(document).ready(function(){
 	var mouseX, mouseY;
 	var bulletAngle = [];
 	var enemyAngle = [];
-
+	var winCount = 1;
+  var currentLevelCheck = 1;
 	var coinAudio = document.getElementById("coin");
 	var bulletAudio = document.getElementById("bullet");
 
@@ -254,6 +268,7 @@ $(document).ready(function(){
 			}
 			else{
 				//Go to next level
+				winCount += 1
 				score++;
 				endGame();
 			}
@@ -936,27 +951,39 @@ $(document).ready(function(){
 
 	}
 
+
 	function endGame() {
 
 
+		if(campaignMode){
+			if(currentLevelCheck == winCount){
+				$("#header").text("You have lost...");
+			}else{
+				$("#header").text("You have completed Level " + currentLevelCheck);
+			}
+			$(".CampaignButton").show();
+		}else{
+			$("#header").text("Game Over");
+			$("#score").text("Your score was: " + score);
+			$("#highscores").text("High Scores:");
+			var scores = JSON.parse(localStorage.getItem('score')) || [];
+			scores.push(score);
+			scores.sort(function(a, b){return b-a});
 
+			localStorage.setItem("score", JSON.stringify(scores));
+			var highscores = localStorage.getItem("score");
+			highscores = highscores.replace(/[[\]]/g,'')
 
-		var scores = JSON.parse(localStorage.getItem('score')) || [];
-		scores.push(score);
-		scores.sort(function(a, b){return b-a});
+			$("#score1").text("1) " + highscores.split(/,/)[0]);
+			$("#score2").text("2) " + highscores.split(/,/)[1]);
+			$("#score3").text("3) " + highscores.split(/,/)[2]);
+			$("#score4").text("4) " + highscores.split(/,/)[3]);
+			$("#score5").text("5) " + highscores.split(/,/)[4]);
+			$(".SurvivalButton").show();
+		}
 
-		localStorage.setItem("score", JSON.stringify(scores));
-		var highscores = localStorage.getItem("score");
-		highscores = highscores.replace(/[[\]]/g,'')
-
-		$("#score1").text(highscores.split(/,/)[0]);
-		$("#score2").text(highscores.split(/,/)[1]);
-		$("#score3").text(highscores.split(/,/)[2]);
-		$("#score4").text(highscores.split(/,/)[3]);
-		$("#score5").text(highscores.split(/,/)[4]);
 
     $("#canvas").hide();
-    $("#score").text(score);
 
 		var con = drawing.getContext("2d");
 		con.clearRect(0, 0, drawing.width, drawing.height);
