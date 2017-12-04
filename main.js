@@ -133,9 +133,7 @@ $(document).ready(function(){
 	var mouseX, mouseY;
 	var bulletAngle = [];
 	var enemyAngle = [];
-	var playerBulletAngle = [];
-	var playerAngle= [];
-	var highscores = [];
+
 	var coinAudio = document.getElementById("coin");
 	var bulletAudio = document.getElementById("bullet");
 
@@ -262,8 +260,7 @@ $(document).ready(function(){
 			score++;
 			newEnemy();
 		}
-
-		if(playerBullet.length > 0){
+		if(playerBulletLoc.length > 0){
 			updatePlayerBullet();
 			checkPlayerBulletHit();
 			playerBulletWallCollision();
