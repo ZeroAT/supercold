@@ -26,6 +26,8 @@ var campaignMode = false;
 var survivalMode = [[225,200],[],[],[20,20]];
 var level1 = [[5,5],[550,20,100,375],[50,50,100,100,200,50,100,100,350,50,100,100,50,200,100,100,200,200,100,100,350,200,100,100],[550,370]];
 var level2 = [[5,5],[300,300,50,250],[420,200,100,100,100,100,25,25,400,350,25,25,400,60,50,50,125,175,25,25,150,225,25,25],[550,350]];
+var level3 = [[5,5],[50,300,550,375],[470,275,100,100,470,150,100,100,330,150,100,100,330,275,100,100,120,150,225,50,100,275,250,25,75,150,50,275],[125,300]];
+
 $(document).ready(function(){
 
 	$(".SurvivalButton").click(function () {
@@ -57,6 +59,11 @@ $(document).ready(function(){
 			}else if(winCount == 2){
 				currentLevel = level2;
 				currentLevelCheck = 2;
+
+			}else if(winCount == 3){
+				currentLevel = level3;
+				currentLevelCheck = 3;
+
 			}else{
 				currentLevel = level1
 				winCount = 1;
@@ -76,15 +83,21 @@ $(document).ready(function(){
 		        $(".DeathScreen").hide();
 		        $("#canvas").hide();
 				$(".CreditScreen").hide();
-				var highscores = localStorage.getItem("score");
-				highscores = highscores.replace(/[[\]]/g,'')
-				console.log(highscores);
-				$("#score6").text(highscores.split(/,/)[0]);
-				$("#score7").text(highscores.split(/,/)[1]);
-				$("#score8").text(highscores.split(/,/)[2]);
-				$("#score9").text(highscores.split(/,/)[3]);
-				$("#score10").text(highscores.split(/,/)[4]);
-				$(".HighScoresScreen").show();
+				if(localStorage.getItem("score") === null){
+					$(".HighScoresScreen").show();
+				}else{
+					var highscores = localStorage.getItem("score");
+					highscores = highscores.replace(/[[\]]/g,'')
+					console.log(highscores);
+					$("#score6").text(highscores.split(/,/)[0]);
+					$("#score7").text(highscores.split(/,/)[1]);
+					$("#score8").text(highscores.split(/,/)[2]);
+					$("#score9").text(highscores.split(/,/)[3]);
+					$("#score10").text(highscores.split(/,/)[4]);
+					$(".HighScoresScreen").show();
+
+				}
+
 
 
 
@@ -972,13 +985,32 @@ $(document).ready(function(){
 
 			localStorage.setItem("score", JSON.stringify(scores));
 			var highscores = localStorage.getItem("score");
-			highscores = highscores.replace(/[[\]]/g,'')
+			highscores = highscores.replace(/[[\]]/g,'');
 
-			$("#score1").text("1) " + highscores.split(/,/)[0]);
-			$("#score2").text("2) " + highscores.split(/,/)[1]);
-			$("#score3").text("3) " + highscores.split(/,/)[2]);
-			$("#score4").text("4) " + highscores.split(/,/)[3]);
-			$("#score5").text("5) " + highscores.split(/,/)[4]);
+			for(var z = 0; z <= 5; z++){
+				if(highscores.split(/,/)[z] == null){
+					if(z==0){
+						$("#score" + z).text("1) " + "N/A");
+					}else if(z != 0){
+						$("#score" + z).text( z + ") " + "N/A");
+					}
+				}else{
+					if(z==0){
+						console.log("z=0");
+						$("#score" + z).text("1) " + highscores.split(/,/)[z]);
+					}else if(z != 0){
+						console.log("z!=0");
+						$("#score" + z).text( z + ") " + highscores.split(/,/)[z]);
+					}
+
+						}
+}
+			//	$("#score1").text("1) " + highscores.split(/,/)[0]);
+				//$("#score2").text("2) " + highscores.split(/,/)[1]);
+				//$("#score3").text("3) " + highscores.split(/,/)[2]);
+				///$("#score4").text("4) " + highscores.split(/,/)[3]);
+				//$("#score5").text("5) " + highscores.split(/,/)[4]);
+
 			$(".SurvivalButton").show();
 		}
 
