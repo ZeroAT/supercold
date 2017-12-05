@@ -22,6 +22,7 @@ var enemiesFiring = [];
 var playerX;
 var playerY;
 var currentLevel = [[],[],[],[]];
+var numberOfLevels = 5;
 var campaignMode = false;
 var survivalMode = [[225,200],[],[],[20,20]];
 var level1 = [[5,5],[550,20,100,375],[50,50,100,100,200,50,100,100,350,50,100,100,50,200,100,100,200,200,100,100,350,200,100,100],[550,370]];
@@ -37,6 +38,7 @@ $(document).ready(function(){
 		$(".CreditScreen").hide();
 		$(".HighScoresScreen").hide();
     $("#canvas").show();
+		campaignMode = false;
 		currentLevel = survivalMode;
 		createLevel();
 		offsetDY = accel.getAY();
@@ -53,7 +55,6 @@ $(document).ready(function(){
 			$(".CreditScreen").hide();
 			$(".HighScoresScreen").hide();
 			$("#canvas").show();
-
 			if (winCount == 1){
 				currentLevel = level1;
 				currentLevelCheck = 1;
@@ -124,7 +125,10 @@ $(document).ready(function(){
 	});
 
 	$(".ReturnButton").click(function () {
+		$(".CampaignButton").show();
+		$(".SurvivalButton").show();
 		$(".MainMenu").show();
+
         $(".DeathScreen").hide();
 				$(".HighScoresScreen").hide();
         $(".canvas").hide();
@@ -301,8 +305,8 @@ $(document).ready(function(){
 			timescaleRate+=0.75;
 		}
 
-		console.log("dX: " +dX);
-		console.log("dY: " +dY);
+		//console.log("dX: " +dX);
+		//console.log("dY: " +dY);
 
 		//set change of position of player
 		playerX += dX;
@@ -1010,13 +1014,24 @@ $(document).ready(function(){
 
 
 		if(campaignMode){
+
+			console.log("CAMPAIGN MODE");
 			if(currentLevelCheck == winCount){
 				$("#header").text("You have lost...");
+
+			}else if((currentLevelCheck != winCount) && (currentLevelCheck == numberOfLevels)){
+				$("#header").text("VICTORY! You have completed all " + numberOfLevels +  " levels of the campaign mode.");
 			}else{
 				$("#header").text("You have completed Level " + currentLevelCheck);
+
 			}
-			$(".CampaignButton").show();
+			$(".SurvivalButton").hide();
+			$('.CampaignButton').show();
+			$(".ReturnButton").show();
 		}else{
+			$(".SurvivalButton").show();
+			$('.CampaignButton').hide()
+			console.log("Survival Mode");
 			$("#header").text("Game Over");
 			$("#score").text("Your score was: " + score);
 			$("#highscores").text("High Scores:");
@@ -1037,22 +1052,17 @@ $(document).ready(function(){
 					}
 				}else{
 					if(z==0){
-						console.log("z=0");
-						$("#score" + z).text("1) " + highscores.split(/,/)[z]);
+						//console.log("z=0");
 					}else if(z != 0){
-						console.log("z!=0");
+						$("#score" + z).text("1) " + highscores.split(/,/)[z]);
+						//console.log("z!=0");
 						$("#score" + z).text( z + ") " + highscores.split(/,/)[z]);
 					}
 
 						}
 }
-			//	$("#score1").text("1) " + highscores.split(/,/)[0]);
-				//$("#score2").text("2) " + highscores.split(/,/)[1]);
-				//$("#score3").text("3) " + highscores.split(/,/)[2]);
-				///$("#score4").text("4) " + highscores.split(/,/)[3]);
-				//$("#score5").text("5) " + highscores.split(/,/)[4]);
 
-			$(".SurvivalButton").show();
+
 		}
 
 
@@ -1068,8 +1078,8 @@ $(document).ready(function(){
 		score = 0;
 
 
-    $(".DeathScreen").show();
 
+    $(".DeathScreen").show();
 		clearInterval(start);
     }
 
