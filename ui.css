@@ -19,7 +19,7 @@ body {
      margin: 0 auto;
      display: block;
  }
-.SurvivalButton, .CampaignButton, .CreditButton, .RestartButton, .NextLevelButton, .HighScoresButton, .StartButton {
+.SurvivalButton, .CampaignButton, .CreditButton, .RestartButton, .NextLevelButton, .HighScoresButton, .StartButton, .ReturnButton {
     background-color: #000000; /* Black */
     border: none;
     color: white;
