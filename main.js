@@ -23,11 +23,12 @@ var playerX;
 var playerY;
 var currentLevel = [[],[],[],[]];
 var campaignMode = false;
-var survivalMode = [[225,200],[],[],[20,20]];
+//var survivalMode = [[225,200],[],[],[20,20]];
 var level1 = [[5,5],[550,20,100,375],[50,50,100,100,200,50,100,100,350,50,100,100,50,200,100,100,200,200,100,100,350,200,100,100],[550,370]];
 var level2 = [[5,5],[300,300,50,250],[420,200,100,100,100,100,25,25,400,350,25,25,400,60,50,50,125,175,25,25,150,225,25,25],[550,350]];
 var level3 = [[5,5],[50,300,550,375],[470,275,100,100,470,150,100,100,330,150,100,100,330,275,100,100,120,150,225,50,100,275,250,25,75,150,50,275],[125,300]];
-
+var level4 = [[300,350],[80,50,120,50,160,50, 200,50, 240,50,280,50,320,50,360,50,410,50,450,50,490,50], [50,200,500,20],[300,20]];
+var level5 = [[275,375],[175,45,175,95,175,135,175,175,175,225,175,265,175,305,175,345,375,45,375,95,375,135,375,175,375,225,375,265,375,305,375,345],[],[275,5]]
 $(document).ready(function(){
 
 	$(".SurvivalButton").click(function () {
@@ -56,15 +57,26 @@ $(document).ready(function(){
 			if (winCount == 1){
 				currentLevel = level1;
 				currentLevelCheck = 1;
-			}else if(winCount == 2){
+			}
+			else if(winCount == 2){
 				currentLevel = level2;
 				currentLevelCheck = 2;
 
-			}else if(winCount == 3){
+			}
+			else if(winCount == 3){
 				currentLevel = level3;
 				currentLevelCheck = 3;
+			}
+			else if(winCount ==4){
+				currentLevel = level4;
+				currentLevelCheck = 4;
+			}
+			else if(winCount ==5){
+				currentLevel = level5;
+				currentLevelCheck = 5;
+			}
 
-			}else{
+			else{
 				currentLevel = level1
 				winCount = 1;
 				currentLevelCheck = 1;
@@ -129,11 +141,14 @@ $(document).ready(function(){
 	clockTime = 0;
 	dX = 0;
 	dY = 0;
-	xVal = 0;
-	yVal = 0;
-	maxAccel = 5;
+	accelDY = 0;
+	accelDX = 0;
+	//xVal = 0;
+	//yVal = 0;
+	maxAccel = 15;
 	firstPathCheck = true;
 	updateCounter = 1;
+	var collisionPoint = false;
 
 
 
@@ -150,7 +165,7 @@ $(document).ready(function(){
 	var changeDY, changeDX;
 	var offsetDX, offsetDY;
 	var mouseDownBool;
-	var movement = setInterval(setMovement,100);
+	//var movement = setInterval(setMovement,100);
 	var accel = new Accel();
 	var oldDY = 0;
 	var oldDX = 0;
@@ -158,7 +173,7 @@ $(document).ready(function(){
 	var score = 0;
 	var mouseX, mouseY;
 	var bulletAngle = [];
-	var enemyAngle = [];
+	//var enemyAngle = [];
 	var winCount = 1;
   var currentLevelCheck = 1;
 	var coinAudio = document.getElementById("coin");
@@ -190,20 +205,24 @@ $(document).ready(function(){
 		e = e || window.event;
 
 		if (e.keyCode == '38') {
-		    changeDY = setInterval(setYRate(-1),33);
-		    timescaleRate += 1;
+		    //changeDY = setInterval(setYRate(-1),33);
+				accelDY = -0.5;
+		    //timescaleRate += 1;
 		}
 		else if (e.keyCode == '40') {
-		    changeDY = setInterval(setYRate(1),33);
-		    timescaleRate += 1;
+		    //changeDY = setInterval(setYRate(1),33);
+				accelDY = 0.5;
+		    //timescaleRate += 1;
 		}
 		else if (e.keyCode == '37') {
-		    changeDX = setInterval(setXRate(-1),33);
-		    timescaleRate += 1;
+		    //changeDX = setInterval(setXRate(-1),33);
+				accelDX = -0.5;
+		    //timescaleRate += 1;
 		}
 		else if (e.keyCode == '39') {
-		    changeDX = setInterval(setXRate(1),33);
-		    timescaleRate += 1;
+		   //changeDX = setInterval(setXRate(1),33);
+				accelDX = 0.5;
+		    //timescaleRate += 1;
 		}
 
 	}
@@ -214,26 +233,31 @@ $(document).ready(function(){
 		e = e || window.event;
 
 		if (e.keyCode == '38') {
-		    clearInterval(changeDY);
-		    timescaleRate += 1;
+		    //clearInterval(changeDY);
+				accelDY = 0;
+		    //timescaleRate += 1;
 		}
 		else if (e.keyCode == '40') {
-		    clearInterval(changeDY);
-		    timescaleRate += 1;
+		    //clearInterval(changeDY);
+				accelDY = 0;
+		    //timescaleRate += 1;
 		}
 		else if (e.keyCode == '37') {
-		    clearInterval(changeDX);
-		    timescaleRate += 1;
+		    //clearInterval(changeDX);
+				accelDX = 0;
+		    //timescaleRate += 1;
 		}
 		else if (e.keyCode == '39') {
-		    clearInterval(changeDX);
-		    timescaleRate += 1;
+		    //clearInterval(changeDX);
+				accelDX = 0;
+		    //timescaleRate += 1;
 		}
 
 	}
 
 
 	function draw(){
+
 
 		var w = $("#canvas").width();
 		var h = $("#canvas").height();
@@ -257,7 +281,7 @@ $(document).ready(function(){
     oldDX = newDX;
  		oldDY = newDY;
 
-
+/*
 		//check for max velocity
 		if(dX > maxAccel){
 			dX = maxAccel;
@@ -266,6 +290,19 @@ $(document).ready(function(){
 		if(dY > maxAccel){
 			dY = maxAccel;
 		}
+*/
+		if(accelDX != 0){
+			dX += accelDX;
+			timescaleRate+=0.75;
+		}
+
+		if(accelDY != 0){
+			dY += accelDY;
+			timescaleRate+=0.75;
+		}
+
+		console.log("dX: " +dX);
+		console.log("dY: " +dY);
 
 		//set change of position of player
 		playerX += dX;
@@ -462,11 +499,11 @@ $(document).ready(function(){
 	  	dX += val;
 	  }
 
-	  function setMovement() {
+	 // function setMovement() {
 
-	  	dX += xVal;
-	  	dY += yVal;
-	  }
+	  	//dX += xVal;
+	  	//dY += yVal;
+	  //}
 
 	  function newCoin(){
 	  	coinX = Math.random() * (580);
@@ -604,25 +641,26 @@ $(document).ready(function(){
 				}
 			}
 
-			//check player collision with boundaries
-
-			for(b=0; b<=Enemy.length/2; b+=2){
-				if(Enemy[b]+18 >= currentLevel[2][b] && Enemy[b] <= currentLevel[2][b]+currentLevel[2][b+2] && Enemy[b+1]+18 >= currentLevel[2][b+1] && Enemy[b+1] <= currentLevel[2][b+1]+currentLevel[2][b+3]){
-
-					if(Enemy[b]-3 < currentLevel[2][b] && Enemy[b+1]+15 >= currentLevel[2][b+1] && Enemy[b+1]+3 < currentLevel[2][b+1]+currentLevel[2][b+3]){
-						Enemy[b] = currentLevel[2][b]-18;
+			//check enemy collision with boundaries
+		for(b=0; b<=currentLevel[2].length; b+=4){
+			for(c=0; c<=Enemy.length; c+=2){
+				if(Enemy[c]+18 >= currentLevel[2][b] && Enemy[c] <= currentLevel[2][b]+currentLevel[2][b+2] && Enemy[c+1]+18 >= currentLevel[2][b+1] && Enemy[c+1] <= currentLevel[2][b+1]+currentLevel[2][b+3]){
+					console.log("ENEMY " + i + " HITTING BOUNDARY");
+					if(Enemy[c]-3 < currentLevel[2][b] && Enemy[c+1]+15 >= currentLevel[2][b+1] && Enemy[c+1]+3 < currentLevel[2][b+1]+currentLevel[2][b+3]){
+						Enemy[c] = currentLevel[2][b]-23;
 					}
-					if(Enemy[b]+15 > currentLevel[2][b]+currentLevel[2][b+2] && Enemy[b+1]+15 > currentLevel[2][b+1] && Enemy[b+1]+3 < currentLevel[2][b+1]+currentLevel[2][b+3]){
-						Enemy[b] = currentLevel[2][b]+currentLevel[2][b+2];
+					if(Enemy[c]+15 > currentLevel[2][b]+currentLevel[2][b+2] && Enemy[c+1]+15 > currentLevel[2][b+1] && Enemy[c+1]+3 < currentLevel[2][b+1]+currentLevel[2][b+3]){
+						Enemy[c] = currentLevel[2][b]+currentLevel[2][b+2]+5;
 					}
-					if(Enemy[b+1]-3 < currentLevel[2][b+1] && Enemy[b]+15 > currentLevel[2][b] && Enemy[b]+3 < currentLevel[2][b]+currentLevel[2][b+2]){
-						Enemy[b+1] = currentLevel[2][b+1]-18;
+					if(Enemy[c+1]-3 < currentLevel[2][b+1] && Enemy[c]+15 > currentLevel[2][b] && Enemy[c]+3 < currentLevel[2][b]+currentLevel[2][b+2]){
+						Enemy[c+1] = currentLevel[2][b+1]-23;
 					}
-					if(Enemy[b+1]+15 > currentLevel[2][b+1]+currentLevel[2][b+3] && Enemy[b]+15 > currentLevel[2][b] && Enemy[b]+3 < currentLevel[2][b]+currentLevel[2][b+2]){
-						Enemy[b+1] = currentLevel[2][b+1]+currentLevel[2][b+3];
+					if(Enemy[c+1]+15 > currentLevel[2][b+1]+currentLevel[2][b+3] && Enemy[c]+15 > currentLevel[2][b] && Enemy[c]+3 < currentLevel[2][b]+currentLevel[2][b+2]){
+						Enemy[c+1] = currentLevel[2][b+1]+currentLevel[2][b+3]+5;
 					}
 				}
 			}
+		}
 
 
 			//if(playerX )
@@ -699,7 +737,10 @@ $(document).ready(function(){
 	  } //end updateBullet
 
 		function updateEnemy(){
-			//use timescale to determine next location of bullets on slope of bullet trace rays
+
+			updateCounter += 1;
+
+			//use timescale to determine next location of enemies on slope of enemy trace rays
 			for(i = 0; i <= Enemy.length-1; i+=2){
 
 				if(playerX<Enemy[i]){
@@ -709,19 +750,17 @@ $(document).ready(function(){
 					enemyAngle.splice(i,2,Math.atan((playerY-Enemy[i+1])/(playerX-Enemy[i])),0);
 				}
 
-				//console.log(enemyAngle[0]*(180/Math.PI));
-				//console.log("Calculation: " + Math.atan((playerY-Enemy[i+1])/(playerX-Enemy[i]))*(180/Math.PI));
-				//console.log("Enemy X: " + Enemy[i] +" Enemy Y: " + Enemy[i+1]);
+				//check enemy's path every second
+				if(updateCounter%33 == 0){
 
 					path = enemyPath(Enemy[i], Enemy[i+1], playerX, playerY);
 					collisionPoint = pathObsticalCollisionCheck(path);
+					updateCounter = 1;
 
-
-				//}
+				}
 				if(collisionPoint){
 
 					winningEdge = nearestEdge(collisionPoint, playerX, playerY, true);
-
 					if(winningEdge[0]<Enemy[i]){
 						enemyAngle.splice(i,2,Math.atan((winningEdge[1]-Enemy[i+1])/(winningEdge[0]-Enemy[i]))+Math.PI,0);
 					}
@@ -729,9 +768,11 @@ $(document).ready(function(){
 						enemyAngle.splice(i,2,Math.atan((winningEdge[1]-Enemy[i+1])/(winningEdge[0]-Enemy[i])),0);
 					}
 
+					//collisionPoint = false;
+
+				}
+				else{
 					collisionPoint = false;
-
-
 				}
 
 					Enemy[i] += (Math.cos(enemyAngle[i]))*timescaleRate/4;
@@ -766,10 +807,10 @@ $(document).ready(function(){
 
 			Bounds.push(999,999);
 
-			startX = startX -20;
-			startY = startY -20;
-			width = width + 18;
-			height = height + 18;
+			startX = startX -17;
+			startY = startY -17;
+			width = width +34;
+			height = height+34;
 
 			//create Enemy Bounds
 			EnemyBounds.push(999,999);
