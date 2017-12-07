@@ -19,10 +19,16 @@ var Bounds = [];
 var EnemyBounds = [];
 var enemyBulletTrace = [];
 var enemiesFiring = [];
+var nodeArray = [];
+var nodeNeighbors = [];
+var	node2node = [];
+var node2nodePositions = [];
+var nodeBounds = [];
 var playerX;
 var playerY;
 var currentLevel = [[],[],[],[]];
 var numberOfLevels = 5;
+var showNodePath = false;
 var campaignMode = false;
 var survivalMode = [[225,200],[],[],[20,20]];
 var level1 = [[5,5],[550,20,100,375],[50,50,100,100,200,50,100,100,350,50,100,100,50,200,100,100,200,200,100,100,350,200,100,100],[550,370]];
@@ -30,6 +36,9 @@ var level2 = [[5,5],[300,300,50,250],[420,200,100,100,100,100,25,25,400,350,25,2
 var level3 = [[5,5],[50,300,550,375],[470,275,100,100,470,150,100,100,330,150,100,100,330,275,100,100,120,150,225,50,100,275,250,25,75,150,50,275],[125,300]];
 var level4 = [[300,350],[80,50,120,50,160,50, 200,50, 240,50,280,50,320,50,360,50,410,50,450,50,490,50], [50,200,500,20],[300,20]];
 var level5 = [[275,375],[175,45,175,95,175,135,175,175,175,225,175,265,175,305,175,345,375,45,375,95,375,135,375,175,375,225,375,265,375,305,375,345],[],[275,5]]
+//for testing
+//survivalMode = level2;
+
 $(document).ready(function(){
 
 	$(".SurvivalButton").click(function () {
@@ -227,6 +236,9 @@ $(document).ready(function(){
 		   //changeDX = setInterval(setXRate(1),33);
 				accelDX = 0.5;
 		    //timescaleRate += 1;
+		}
+		else if(e.keyCode == '78'){
+			showNodePath = !showNodePath;
 		}
 
 	}
@@ -431,6 +443,27 @@ $(document).ready(function(){
 			endGame();
 			//alert("Game over!");
 			//quit();
+		}
+
+		if(showNodePath){
+
+			con.strokeStyle = "rgba(0,0,255,0.25)";
+			con.lineWidth = 3;
+			//console.log("Displaying Node Path");
+
+			for(f=0; f<nodeArray.length; f+=1){
+				for(g=0;g<nodeArray.length; g+=1){
+					if(nodeNeighbors[(f*nodeArray.length+g)] != 999 ){
+						con.beginPath();
+						con.moveTo(nodeArray[f][0], nodeArray[f][1]);
+						//console.log("Move from: " + nodeArray[f] + " to " + node2nodePositions[(f+1)*g+f] + "(node2nodePositions[" + ((f+1)*g+f) + "])");
+						con.lineTo(nodeArray[g][0],nodeArray[g][1]);
+						con.stroke();
+
+					}
+
+				}
+			}
 		}
 
 	} // end draw
@@ -754,7 +787,7 @@ $(document).ready(function(){
 					enemyAngle.splice(i,2,Math.atan((playerY-Enemy[i+1])/(playerX-Enemy[i])),0);
 				}
 
-				//check enemy's path every second
+				//check enemy's path every interval
 				if(updateCounter%33 == 0){
 
 					path = enemyPath(Enemy[i], Enemy[i+1], playerX, playerY);
@@ -837,7 +870,34 @@ $(document).ready(function(){
 			}
 			EnemyBounds.push(999,999);
 		  //return boundary;
-		}
+
+			startX = startX -19;
+			startY = startY -19;
+			width = width+20;
+			height = height+20;
+
+			nodeBounds = [];
+
+			//create Enemy Bounds
+			nodeBounds.push(999,999);
+			for(i=0; i<=width; i+=1){
+				nodeBounds.push(startX+i,startY);
+			}
+			nodeBounds.push(999,999);
+			for(i=0; i<=width; i+=1){
+				nodeBounds.push(startX+i,startY+height);
+			}
+			nodeBounds.push(999,999);
+			for(i=0; i<=height; i+=1){
+				nodeBounds.push(startX+width,startY+i);
+			}
+			nodeBounds.push(999,999);
+			for(i=0; i<=height; i+=1){
+				nodeBounds.push(startX,startY+i);
+			}
+			nodeBounds.push(999,999);
+			//return node Boundaries;
+}
 
 		//returns array of enemy line of sight directly to player
 		function enemyPath(enemyX, enemyY, playerX, playerY){
@@ -1007,7 +1067,202 @@ $(document).ready(function(){
 		coinX = currentLevel[3][0];
 		coinY = currentLevel[3][1];
 
+		createNodes();
+		populateNodeNeighbors();
+
 	}
+
+//returns direct vector array from one X,Y position to another
+function sightPath(startX, startY, endX, endY){
+		length = Math.sqrt(Math.pow(startX-endX,2) + Math.pow(startY-endY,2));
+
+	if(endX<startX){
+			pathAngle = Math.atan((endY-startY)/(endX-startX))+Math.PI;
+	}
+	else{
+		pathAngle = Math.atan((endY-startY)/(endX-startX));
+	}
+  pathArray = [startX,startY];
+
+  for(j=0; j<=Math.floor(length)*2; j+=2){
+    pathArray.push(pathArray[j]+Math.cos(pathAngle), pathArray[j+1] +Math.sin(pathAngle));
+  }
+
+	//enemyPathArray.splice(0,10);
+
+  return pathArray;
+}
+
+function pathBoundsCollisionCheck(pathArray,boundsArray){
+
+			  //console.log("*Bounds Array Length: " + boundsArray.length);
+			  //console.log("*Path Array Length: " + pathArray.length);
+
+		for(r=0; r<=pathArray.length;r+=2){
+			for(s=0; s<=boundsArray.length;s+=2){
+
+			    if(Math.round(pathArray[r]) == boundsArray[s] && Math.round(pathArray[r+1]) == boundsArray[s+1]){
+
+			        return s;
+
+			     }
+
+			   }
+
+			}
+
+			return false;
+
+}
+
+function createNodes(){
+
+	nodeArray = [];
+	nodeNeighbors = [];
+
+	  for(i=0;i<currentLevel[2].length;i+=4){
+
+			nodeX = currentLevel[2][i]-19;
+			nodeY = currentLevel[2][i+1]-19;
+
+			//do not added nodes to array if nodes are off of canvas (600x400 currently)
+			if(nodeX < 600 && nodeX > 0 && nodeY < 400 && nodeY > 0){
+				nodeArray.push([nodeX,nodeY]);
+			}
+
+			nodeX = currentLevel[2][i]+currentLevel[2][i+2]+1;
+			nodeY = currentLevel[2][i+1]-19;
+
+			if(nodeX < 600 && nodeX > 0 && nodeY < 400 && nodeY > 0){
+				nodeArray.push([nodeX,nodeY]);
+			}
+
+			nodeX = currentLevel[2][i]-19;
+			nodeY = currentLevel[2][i+1]+currentLevel[2][i+3]+1;
+
+			if(nodeX < 600 && nodeX > 0 && nodeY < 400 && nodeY > 0){
+				nodeArray.push([nodeX,nodeY]);
+			}
+
+			nodeX = currentLevel[2][i]+currentLevel[2][i+2]+1;
+			nodeY = currentLevel[2][i+1]+currentLevel[2][i+3]+1;
+
+			if(nodeX < 600 && nodeX > 0 && nodeY < 400 && nodeY > 0){
+				nodeArray.push([nodeX,nodeY]);
+			}
+
+	  }
+
+	  for(m=0; m<nodeArray.length; m+=1){
+	    for(n=0; n<nodeArray.length; n+=1){
+	      path = sightPath(nodeArray[m][0],nodeArray[m][1],nodeArray[n][0],nodeArray[n][1]);
+	      collisionPoint = pathBoundsCollisionCheck(path,Bounds);
+
+	      if(collisionPoint){
+	        nodeNeighbors.push(999);
+	      }
+	      else{
+	        length = Math.sqrt(Math.pow(nodeArray[m][0]-nodeArray[n][0],2) + Math.pow(nodeArray[m][1]-nodeArray[n][1],2));
+
+	        //do not count node as neighbor to itself (length == 0)
+	        if(length > 0){
+	          nodeNeighbors.push(length);
+	          //console.log("Node " + m + " is neighbors with Node " + n);
+	        }
+	        else{
+	          nodeNeighbors.push(999);
+	        }
+	      }
+	    }
+	  }
+	}
+
+function nearestNode2(index,startNode,endNode){
+
+  minDistance = 999;
+  node1 = -1;
+  node2 = -1
+  node1Position = -1;
+  node2Position = -1;
+
+  //find 2 nodes closest to Boundary collisionPoint
+  for(p=0; p<nodeArray.length; p+=1){
+    length = Math.sqrt(Math.pow(nodeArray[p][0]-Bounds[index],2) + Math.pow(nodeArray[p][1]-Bounds[index+1],2));
+
+    if(length<=minDistance && p != startNode){
+      //console.log("Distance to node " + p + " : " + length);
+      node1 = node2;
+      node1Position = node2Position;
+      node2 = nodeArray[p]
+      node2Position = p;
+      minDistance = length;
+
+    }
+  }
+
+  //choose node closest to goal
+  node1Distance = Math.sqrt(Math.pow(node1[0]-nodeArray[endNode][0],2) + Math.pow(node1[1]-nodeArray[endNode][1],2));
+	//console.log("Edge1 Length: " + edge1Length);
+	 node2Distance = Math.sqrt(Math.pow(node2[0]-nodeArray[endNode][0],2) + Math.pow(node2[1]-nodeArray[endNode][1],2));
+	//console.log("Edge2 Length: " + edge2Length);
+
+	if(node1Distance<=node2Distance){
+	   //console.log("node1 wins: " + node1Distance)
+	   return node1Position;
+	}
+	else{
+	  //console.log("node2 wins: " + node2Distance)
+    return node2Position;
+	}
+
+}
+
+function shortestPath(startNode, endNode){
+
+  path = [];
+  findNextNode = true;
+
+  path.push(startNode);
+
+  while(findNextNode){
+    if(node2node[(startNode+1)*endNode+startNode] == 0){
+      path.push(endNode);
+      findNextNode = false;
+    }
+    else{
+      path.push(node2node[(startNode+1)*endNode+startNode]);
+      startNode = node2node[(startNode+1)*endNode+startNode];
+    }
+  }
+
+  return path;
+
+}
+
+function populateNodeNeighbors(){
+	node2node = [];
+  for(x=0; x<nodeArray.length; x+=1){
+    for(y=0; y<nodeArray.length; y+=1){
+      startNode = x;
+      finalNode = y;
+
+      path = sightPath(nodeArray[startNode][0],nodeArray[startNode][1],nodeArray[finalNode][0],nodeArray[finalNode][1]);
+      collisionPoint = pathBoundsCollisionCheck(path,Bounds);
+      if(collisionPoint){
+        //collisionPoint = pathBoundsCollisionCheck(path,nodeBounds);
+        winningNode = nearestNode2(collisionPoint,startNode,finalNode);
+        node2node.push(winningNode);
+				//node2nodePositions.push(nodeArray[winningNode]);
+        //console.log("Node " + startNode + " to Node " + finalNode + " : " + winningNode);
+      }
+      else{
+        node2node.push(0);
+				//node2nodePositions.push(0);
+        //console.log("Node " + startNode + " to Node " + finalNode + " : No collision");
+      }
+    }
+  }
+}
 
 
 	function endGame() {
