@@ -29,6 +29,7 @@ var playerY;
 var currentLevel = [[],[],[],[]];
 var numberOfLevels = 5;
 var showNodePath = false;
+var showNodes = false;
 var campaignMode = false;
 var survivalMode = [[225,200],[],[],[20,20]];
 var level1 = [[5,5],[550,20,100,375],[50,50,100,100,200,50,100,100,350,50,100,100,50,200,100,100,200,200,100,100,350,200,100,100],[550,370]];
@@ -37,7 +38,7 @@ var level3 = [[5,5],[50,300,550,375],[470,275,100,100,470,150,100,100,330,150,10
 var level4 = [[300,350],[80,50,120,50,160,50, 200,50, 240,50,280,50,320,50,360,50,410,50,450,50,490,50], [50,200,500,20],[300,20]];
 var level5 = [[275,375],[175,45,175,95,175,135,175,175,175,225,175,265,175,305,175,345,375,45,375,95,375,135,375,175,375,225,375,265,375,305,375,345],[],[275,5]]
 //for testing
-//survivalMode = level2;
+survivalMode = level2;
 
 $(document).ready(function(){
 
@@ -92,6 +93,7 @@ $(document).ready(function(){
 				currentLevelCheck = 1;
 			}
 			campaignMode = true;
+			reset();
 			createLevel();
 			offsetDY = accel.getAY();
 			offsetDX = accel.getAX();
@@ -239,6 +241,9 @@ $(document).ready(function(){
 		}
 		else if(e.keyCode == '78'){
 			showNodePath = !showNodePath;
+		}
+		else if(e.keyCode == '77'){
+			showNodes = !showNodes;
 		}
 
 	}
@@ -451,6 +456,8 @@ $(document).ready(function(){
 			con.lineWidth = 3;
 			//console.log("Displaying Node Path");
 
+			//console.log()
+
 			for(f=0; f<nodeArray.length; f+=1){
 				for(g=0;g<nodeArray.length; g+=1){
 					if(nodeNeighbors[(f*nodeArray.length+g)] != 999 ){
@@ -463,6 +470,13 @@ $(document).ready(function(){
 					}
 
 				}
+			}
+		}
+
+		if(showNodes){
+			for(f=0; f<nodeArray.length; f+=1){
+				con.fillStyle = "blue";
+				con.fillRect(nodeArray[f][0],nodeArray[f][1],5,5);
 			}
 		}
 
@@ -682,7 +696,7 @@ $(document).ready(function(){
 		for(b=0; b<=currentLevel[2].length; b+=4){
 			for(c=0; c<=Enemy.length; c+=2){
 				if(Enemy[c]+18 >= currentLevel[2][b] && Enemy[c] <= currentLevel[2][b]+currentLevel[2][b+2] && Enemy[c+1]+18 >= currentLevel[2][b+1] && Enemy[c+1] <= currentLevel[2][b+1]+currentLevel[2][b+3]){
-					console.log("ENEMY " + i + " HITTING BOUNDARY");
+					//console.log("ENEMY " + i + " HITTING BOUNDARY");
 					if(Enemy[c]-3 < currentLevel[2][b] && Enemy[c+1]+15 >= currentLevel[2][b+1] && Enemy[c+1]+3 < currentLevel[2][b+1]+currentLevel[2][b+3]){
 						Enemy[c] = currentLevel[2][b]-23;
 					}
@@ -1051,6 +1065,11 @@ $(document).ready(function(){
 		playerY = currentLevel[0][1];
 
 		Enemy = [];
+		nodeArray = [];
+		nodeNeighbors = [];
+		node2node = [];
+		node2nodePositions = [];
+		nodeBounds = [];
 
 		for(i=0; i<currentLevel[1].length; i+=2){
 			newBullet(currentLevel[1][i],currentLevel[1][i+1],Enemy.length);
@@ -1116,7 +1135,7 @@ function pathBoundsCollisionCheck(pathArray,boundsArray){
 }
 
 function createNodes(){
-
+	console.log("Current Level: " + currentLevel);
 	nodeArray = [];
 	nodeNeighbors = [];
 
@@ -1167,7 +1186,7 @@ function createNodes(){
 	        //do not count node as neighbor to itself (length == 0)
 	        if(length > 0){
 	          nodeNeighbors.push(length);
-	          //console.log("Node " + m + " is neighbors with Node " + n);
+	          console.log("Node " + m + " is neighbors with Node " + n);
 	        }
 	        else{
 	          nodeNeighbors.push(999);
@@ -1312,12 +1331,9 @@ function populateNodeNeighbors(){
 						$("#score" + z).text("1) " + highscores.split(/,/)[z]);
 						//console.log("z!=0");
 						$("#score" + z).text( z + ") " + highscores.split(/,/)[z]);
-					}
-
 						}
-}
-
-
+					}
+				}
 		}
 
 
@@ -1331,17 +1347,51 @@ function populateNodeNeighbors(){
 		enemyAngle = [];
 		playerBulletLoc = [];
 		score = 0;
+		Enemy = [];
+		nodeArray = [];
+		nodeNeighbors = [];
+		node2node = [];
+		node2nodePositions = [];
+		nodeBounds = [];
 
 
 
     $(".DeathScreen").show();
-		clearInterval(start);
+			clearInterval(start);
     }
 
 	function quit(){
 
 		clearInterval(start);
 		window.location.reload(false);
+
+	}
+
+	function reset(){
+		//reset all game variables
+		 bulletLoc = [];
+		 playerBullet = [];
+		 playerBulletLoc = [];
+		 Enemy = [];
+		 bulletAngle = [];
+		 enemyAngle = [];
+		 playerBulletAngle = [];
+		 playerAngle= [];
+		 Bounds = [];
+		 EnemyBounds = [];
+		 enemyBulletTrace = [];
+		 enemiesFiring = [];
+		 nodeArray = [];
+		 nodeNeighbors = [];
+		 node2node = [];
+		 node2nodePositions = [];
+		 nodeBounds = [];
+		 showNodePath = false;
+		 showNodes = false;
+		 dX = 0;
+	 	 dY = 0;
+	 	 accelDY = 0;
+	 	 accelDX = 0;
 
 	}
 
