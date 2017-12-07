@@ -1483,7 +1483,7 @@ function populateNodeNeighbors(){
 					}
 				}else{
 					if(z==0){
-						$("#score" + z).text("1) " + highscores[z]);
+						$("#score" + z).text("1) " + highscores.split(/,/)[z]);
 					}else if(z != 0){
 						//console.log("z!=0");
 						$("#score" + z).text( addZ + ") " + highscores.split(/,/)[z]);
