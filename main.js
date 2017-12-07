@@ -1348,7 +1348,7 @@ function populateNodeNeighbors(){
 		bulletAngle = [];
 		enemyAngle = [];
 		playerBulletLoc = [];
-		//score = 0;
+		score = 0;
 		Enemy = [];
 		nodeArray = [];
 		nodeNeighbors = [];
