@@ -1474,19 +1474,19 @@ function populateNodeNeighbors(){
 			highscores = highscores.replace(/[[\]]/g,'');
 
 			for(var z = 0; z <= 5; z++){
+				var addZ = z + 1;
 				if(highscores.split(/,/)[z] == null){
 					if(z==0){
 						$("#score" + z).text("1) " + "N/A");
 					}else if(z != 0){
-						$("#score" + z).text( z + ") " + "N/A");
+						$("#score" + z).text(addZ + ") " + "N/A");
 					}
 				}else{
 					if(z==0){
-						//console.log("z=0");
+						$("#score" + z).text("1) " + highscores[z]);
 					}else if(z != 0){
-						$("#score" + z).text("1) " + highscores.split(/,/)[z]);
 						//console.log("z!=0");
-						$("#score" + z).text( z + ") " + highscores.split(/,/)[z]);
+						$("#score" + z).text( addZ + ") " + highscores.split(/,/)[z]);
 						}
 					}
 				}
