@@ -37,8 +37,8 @@ var level2 = [[5,5],[300,300,50,250],[420,200,100,100,100,100,25,25,400,350,25,2
 var level3 = [[5,5],[50,300,550,375],[470,275,100,100,470,150,100,100,330,150,100,100,330,275,100,100,120,150,225,50,100,275,250,25,75,150,50,275],[125,300]];
 var level4 = [[300,350],[80,50,120,50,160,50, 200,50, 240,50,280,50,320,50,360,50,410,50,450,50,490,50], [50,200,500,20],[300,20]];
 var level5 = [[275,375],[175,45,175,95,175,135,175,175,175,225,175,265,175,305,175,345,375,45,375,95,375,135,375,175,375,225,375,265,375,305,375,345],[],[275,5]]
-//for testing
-survivalMode = level2;
+//for testing levels
+//survivalMode = level6;
 
 $(document).ready(function(){
 
@@ -811,6 +811,8 @@ $(document).ready(function(){
 				}
 				if(collisionPoint){
 
+					EnemyNode =
+
 					winningEdge = nearestEdge(collisionPoint, playerX, playerY, true);
 					if(winningEdge[0]<Enemy[i]){
 						enemyAngle.splice(i,2,Math.atan((winningEdge[1]-Enemy[i+1])/(winningEdge[0]-Enemy[i]))+Math.PI,0);
@@ -1346,7 +1348,7 @@ function populateNodeNeighbors(){
 		bulletAngle = [];
 		enemyAngle = [];
 		playerBulletLoc = [];
-		score = 0;
+		//score = 0;
 		Enemy = [];
 		nodeArray = [];
 		nodeNeighbors = [];
